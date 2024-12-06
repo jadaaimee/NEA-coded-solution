@@ -1,0 +1,2 @@
+0 wilted
+1 watered
