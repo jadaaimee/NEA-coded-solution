@@ -2,7 +2,7 @@ import time
 #make code to note time of photo taken
 #make code to note time of plant watered
 
-def LastPhotoTakenTimer(PhotoTakenTime):
+def LastPhotoTakenTimer(PhotoTakenTime):jada
     #get current time
     CurrentTime=time.time()
 
