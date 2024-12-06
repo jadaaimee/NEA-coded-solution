@@ -111,18 +111,38 @@ def run_ai_model(image_path,model_path="C:\Users\User\OneDrive - Badminton Schoo
     interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tesnors()
 
-#get model input and ouput details
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
+    #get model input and ouput details
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
 
-#load and preprocess image
-img= Image.open(image_path).convert("RGB").resize((224,224))
-img_array = np.array(img, dtype=np.float32)/255.0 #normalize to 01
-img_array = np.expand_dims(img_array, axis=0)
+    #load and preprocess image
+    img= Image.open(image_path).convert("RGB").resize((224,224))
+    img_array = np.array(img, dtype=np.float32)/255.0 #normalize to 01
+    img_array = np.expand_dims(img_array, axis=0)
 
-#load labels
-lable = 
+    #load labels
+    lablels = load_labels(labels_path)
 
+    #set input tensor and run inference
+    interpreter.set_tensor(input_details[0]['index'],img_array)
+    interpreter.invoke()
 
+    #get model output
+    output_data = interpreter.get_tenspr(output_details[0]['index'])
+    predicted_class = np.argmax(output_data) #gets class with highest probability
 
+    #return predicted label using names
+    return labels[predicted_class]
+
+image_path = "C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\test_image.jpg.jpg"
+model_path = "C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\model.tflite"
+labels_path ="C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\labels.txt"
+
+#run ai model 
+result = run_ai_model(image_path,model_path,labels_path)
+
+if result == "Wilted":
+    print("The plant is wilted and needs watering.")
+elif result == "Healthy":
+    print("The plant is healthy and does not need watering.")
 
