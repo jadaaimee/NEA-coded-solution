@@ -121,7 +121,7 @@ img_array = np.array(img, dtype=np.float32)/255.0 #normalize to 01
 img_array = np.expand_dims(img_array, axis=0)
 
 #load labels
-lable
+lable = 
 
 
 
