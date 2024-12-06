@@ -2,7 +2,7 @@ import time
 #make code to note time of photo taken
 #make code to note time of plant watered
 
-def LastPhotoTakenTimer(PhotoTakenTime):jada
+def LastPhotoTakenTimer(PhotoTakenTime):
     #get current time
     CurrentTime=time.time()
 
@@ -95,5 +95,34 @@ LastWateredTimer = ReleaseWater(LastWateredTimer)  # Release water and update ti
 
 # Clean up GPIO after use
 GPIO.cleanup()
+
+import tensorflow as tf 
+import numpy as np
+from PIL import Image
+
+def load_labels(labels_path="C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\labels.txt"):
+    #loads the labels from text file
+    with open(labels_path, "r") as f:
+        labels = f.read().splitlines()
+        return labels
+
+#load tensor flow lite model
+def run_ai_model(image_path,model_path="C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\model.tflite", labels_path="C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\labels.txt"):
+    interpreter = tf.lite.Interpreter(model_path=model_path)
+    interpreter.allocate_tesnors()
+
+#get model input and ouput details
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+
+#load and preprocess image
+img= Image.open(image_path).convert("RGB").resize((224,224))
+img_array = np.array(img, dtype=np.float32)/255.0 #normalize to 01
+img_array = np.expand_dims(img_array, axis=0)
+
+#load labels
+lable
+
+
 
 
