@@ -1,3 +1,4 @@
+import os, pathlib
 import time
 #make code to note time of photo taken
 #make code to note time of plant watered
@@ -100,14 +101,14 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 
-def load_labels(labels_path="C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\labels.txt"):
+def load_labels(labels_path=os.path.join(pathlib.Path(__file__).parent.absolute(), "labels.txt")):
     #loads the labels from text file
     with open(labels_path, "r") as f:
         labels = f.read().splitlines()
         return labels
 
 #load tensor flow lite model
-def run_ai_model(image_path,model_path="C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\model.tflite", labels_path="C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\labels.txt"):
+def run_ai_model(image_path,model_path=os.path.join(pathlib.Path(__file__).parent.absolute(), "model.tflite")):
     interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tesnors()
 
@@ -134,9 +135,10 @@ def run_ai_model(image_path,model_path="C:\Users\User\OneDrive - Badminton Schoo
     #return predicted label using names
     return labels[predicted_class]
 
-image_path = "C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\test_image.jpg.jpg"
-model_path = "C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\model.tflite"
-labels_path ="C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized\labels.txt"
+#image_path = "C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\test_image.jpg.jpg"
+image_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "test_image.jpg.jpg") # Note that this allows for relative paths and will work on all operating systems
+model_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "model.tflite")
+labels_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "labels.txt")
 
 #run ai model 
 result = run_ai_model(image_path,model_path,labels_path)
@@ -145,4 +147,3 @@ if result == "Wilted":
     print("The plant is wilted and needs watering.")
 elif result == "Healthy":
     print("The plant is healthy and does not need watering.")
-

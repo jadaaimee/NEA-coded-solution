@@ -1,61 +1,46 @@
 import tensorflow as tf
+from keras.models import load_model
 import numpy as np
-from PIL import Image
-
+from PIL import Image, ImageOps
+import os, pathlib
+np.set_printoptions(suppress=True)
 # Load the TFLite model
-model_path = r"C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized (1)\model.tflite"
+model_path = os.path.join(pathlib.Path(__file__).parent.absolute(), r"converted_tflite_quantized\keras_Model.h5")
 interpreter = tf.lite.Interpreter(model_path=model_path)
 interpreter.allocate_tensors()
 
 # Load labels
-labels_path = r"C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\converted_tflite_quantized (1)\labels.txt"
+labels_path = os.path.join(pathlib.Path(__file__).parent.absolute(), r"converted_tflite_quantized\labels.txt")
 with open(labels_path, "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
 # Preprocess the image
 def preprocess_image(image_path):
-    image = Image.open(image_path).resize((224, 224))  # Resize to match the model's input size
-    image = np.array(image).astype("float32") / 255.0  # Normalize to [0, 1]
-    image = np.expand_dims(image, axis=0)  # Add batch dimension
-    return image
+    image = Image.open(image_path).convert("RGB")
+    image = ImageOps.fit(image, (224, 224), Image.Resampling.LANCZOS)  # resizing the image to be at least 224x224 and then cropping from the center
+    image_array = np.asarray(image) # turn the image into a numpy array
+    normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1 # Normalise the array
+    return normalized_image_array
 
 # Perform inference
 def predict(image_path):
-    image = preprocess_image(image_path)
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    # Ensure the input tensor type matches the model's expected type
-    input_dtype = input_details[0]['dtype']
-    print("Model expects dtype:", input_dtype)
-
-    if input_dtype == np.uint8:
-        image =image
-    elif input_dtype == np.float32:
-        image = image.astype(np.float32) / 255.0  
-
-# Ensure batch dimension is added
-    image = np.expand_dims(image, axis=0)
-
-    print("After dtype conversion:", image.dtype, image.shape, image.min(), image.max())
-    image = (image * 255).astype(np.uint8)
-    input_tensor = input_tensor.reshape(224, 224, 3)
-  # Adjust based on expected input shape
-
-
-    # Feed the image into the model
-    interpreter.set_tensor(input_details[0]['index'], image)
-    interpreter.invoke()
-
-    # Get the prediction
-    output_data = interpreter.get_tensor(output_details[0]['index'])
-    predicted_label = labels[np.argmax(output_data)]
-    confidence = np.max(output_data)
+    # Create the array of the right shape to feed into the keras model
+    # The 'length' or number of images you can put into the array is
+    # determined by the first position in the shape tuple, in this case 1
+    data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+    image = preprocess_image(image_path=os.path.join(pathlib.Path(__file__).parent.absolute(), "test_image.jpg.jpg"))
+    data[0] = image
+    
+    model = load_model(model_path, compile=False)
+    prediction = model.predict(data)
+    index = np.argmax(prediction)
+    predicted_label = labels[index]
+    confidence = prediction[0][index]
 
     return predicted_label, confidence
 
 # Test the model
-image_path = r"C:\Users\User\OneDrive - Badminton School\Documents\A-LEVELS\A-LEVEL COMPUTER SCIENCE\UNIT 2\NEA PROJECT\NEA coded solution\IMG_1261.jpeg"
+image_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "test_image.jpg.jpg")
 predicted_label, confidence = predict(image_path)
 
 print(f"Predicted label: {predicted_label}")
