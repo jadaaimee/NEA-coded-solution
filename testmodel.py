@@ -1,14 +1,13 @@
 import tensorflow as tf
-from keras.models import load_model
+from keras.models import load_model # type: ignore
 import numpy as np
 from PIL import Image, ImageOps
-import os, pathlib
+import os, pathlib, h5py
 np.set_printoptions(suppress=True)
 # Load the TFLite model
 model_path = os.path.join(pathlib.Path(__file__).parent.absolute(), r"converted_tflite_quantized\keras_Model.h5")
-interpreter = tf.lite.Interpreter(model_path=model_path)
-interpreter.allocate_tensors()
 
+model = load_model(model_path, compile=False)
 # Load labels
 labels_path = os.path.join(pathlib.Path(__file__).parent.absolute(), r"converted_tflite_quantized\labels.txt")
 with open(labels_path, "r") as f:
@@ -28,10 +27,10 @@ def predict(image_path):
     # The 'length' or number of images you can put into the array is
     # determined by the first position in the shape tuple, in this case 1
     data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-    image = preprocess_image(image_path=os.path.join(pathlib.Path(__file__).parent.absolute(), "test_image.jpg.jpg"))
+    image = preprocess_image(image_path)
     data[0] = image
     
-    model = load_model(model_path, compile=False)
+    
     prediction = model.predict(data)
     index = np.argmax(prediction)
     predicted_label = labels[index]
@@ -46,3 +45,8 @@ predicted_label, confidence = predict(image_path)
 print(f"Predicted label: {predicted_label}")
 print(f"Confidence: {confidence:.2f}")
 
+image_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "IMG_1261.jpeg")
+predicted_label, confidence = predict(image_path)
+
+print(f"Predicted label: {predicted_label}")
+print(f"Confidence: {confidence:.2f}")
