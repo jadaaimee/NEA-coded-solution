@@ -3,14 +3,18 @@ import time
 #make code to note time of photo taken
 #make code to note time of plant watered
 
+#function to note time of photo taken
 def LastPhotoTakenTimer(PhotoTakenTime):
     #get current time
     CurrentTime=time.time()
 
-    if PhotoTakenTime is not None:
+    if PhotoTakenTime is not None:#if photo taken
+        #get time since last photo taken
         timer=CurrentTime-PhotoTakenTime
+        #print time since last photo taken
         print(timer)
     else:
+       #if no photo taken yet
        print(None)
 
 # #testing
@@ -23,23 +27,27 @@ def LastPhotoTakenTimer(PhotoTakenTime):
 
 #last waterd timer fucntion
 def LastWateredTimer(WateredTime):
+    #get current time
     CurrentTime=time.time()
 
-    if WateredTime is not None:
+    if WateredTime is not None:#if plant watered
+        #get time since last watered
         timer = CurrentTime - WateredTime
-        print(timer)
+        print(timer)#print time since last watered
     else:
-        print(None)
+        print(None)#if plant not watered yet
 
-def LastWateredScreen(WateredTime):
-    CurrentTime=time.time()
-    if WateredTime is not None:
-        timer = CurrentTime - WateredTime
-        hours = int(timer//3600)
-        minutes = int((timer%3600)//60)
-    #i have changed this from showing the exact time, to showing how long ago, to remove confusion
+
+def LastWateredScreen(WateredTime):#function to print time since last watered
+    CurrentTime=time.time()#get current time
+    if WateredTime is not None:#if plant watered
+        timer = CurrentTime - WateredTime#time since last watered
+        hours = int(timer//3600)#hours since last watered
+        minutes = int((timer%3600)//60)#minutes since last watered
         print(f"Plant was last watered: {hours} hours and {minutes} minutes ago.")
+        #print time since last watered
     else:
+        #if plant not watered yet
         print("Plant has not yet been watered")
 
 # #testing
