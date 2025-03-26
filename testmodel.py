@@ -40,11 +40,12 @@ def WOW():
         return predicted_label, confidence # Return the predicted label and confidence
 
     # Test the model
-    image_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "testimg1") # Load the image path
+    image_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "tested photos\done.jpg") # Load the image path
     predicted_label, confidence = predict(image_path) # Perform the prediction
 
     return predicted_label
     #print(f"Predicted label: {predicted_label}") # Print the predicted label
     #print(f"Confidence: {confidence:.2f}") # Print the confidence of the prediction
 
-WOW() # Run the function
+if __name__ == "__main__":
+    WOW() # Run the function
